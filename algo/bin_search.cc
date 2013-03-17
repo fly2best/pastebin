@@ -113,7 +113,7 @@ int bin_search_last(int key,int *p, int n)
 
     assert(l == r);
 
-    if (p[l - 1] == key)
+    if (l != 0 && p[l - 1] == key) //少考虑一种情况
         return l - 1;
 
     return -1;
