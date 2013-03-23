@@ -1,0 +1,22 @@
+
+-   static数据成员
+
+    static成员不占类的空间.
+        struct test_t
+        {
+            int a;
+            int b;
+            static int staitc_c;
+            static const int static_d;
+        };
+
+        int test_t::static_c = 3;  // no static
+
+        sont int test_t::static_d;  // no need to intilize any more
+
+        int main(int argc, const char *argv[])
+        {
+            cout << sizeof(test_t) << endl;
+            return 0;
+        }
+    结果是8.

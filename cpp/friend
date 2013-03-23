@@ -1,0 +1,23 @@
+
+
+-   可以把一个类成名为友元类
+-   可以把一个类的成员函数声明友元函数
+
+-   友元声明与作用域
+
+右元声明将已命名的类或非常元函数引入到外围的作用域中.
+此外，友元函数可以在类的内部定义，改函数的作用域扩展到包围该类定义的区域.
+
+example:
+
+    class X {
+        friend class Y;
+        friend void f() { /*ok to define friend function in the class body.*/ };
+    }
+
+    class Z {
+        Y *ymem; //ok:
+        void g() {return ::f();}
+    }
+
+-   类必需将重载函数中每一个希望谁为友元的函数都声明为友元.
