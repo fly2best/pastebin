@@ -1,0 +1,21 @@
+
+
+system  load  averages is the average number of processes that are either in a runnable or unin‐
+terruptable state.  A process in a runnable state is either using the CPU or waiting to use  the
+CPU.   A  process  in uninterruptable state is waiting for some I/O access, eg waiting for disk.
+The averages are taken over the three time intervals.  Load averages are not normalized for  the
+number  of  CPUs in a system, so a load average of 1 means a single CPU system is loaded all the
+time while on a 4 CPU system it means it was idle 75% of the time.
+摘自man uptime
+
+
+
+For example, one can interpret a load average of "1.73 0.60 7.98" on a single-CPU system as:
+
+    during the last minute, the system was overloaded by 73% on average (1.73 runnable processes, so that 0.73 processes had to wait for a turn for a single CPU system on average).
+    during the last 5 minutes, the CPU was idling 40% of the time on average.
+    during the last 15 minutes, the system was overloaded 698% on average (7.98 runnable processes, so that 6.98 processes had to wait for a turn for a single CPU system on average).
+
+This means that this system (CPU, disk, memory, etc) could have handled all of the work scheduled for the last minute if it were 1.73 times as fast.
+摘自:
+http://en.wikipedia.org/wiki/Load_(computing)
