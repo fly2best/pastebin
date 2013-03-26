@@ -1,0 +1,92 @@
+
+如果一个类不想被拷贝,
+一般可以这么做, 定义私有的拷贝构造函数, 赋值运算符.
+这样在编译时候因为没有访问权限而编译出错.
+
+但是friend还是可以拷贝, 如此，我们可以只声明，不实现, 这样在链接的时候时候出现链接错误.
+
+还有一种方法, 就是定义一个类, 把它的拷贝构造函数和赋值操作符声明为私有的.
+然后私有继承之.
+
+那么所有的派生类都不能拷贝.
+
+boost中的noncopyable就是这样一个东西.
+
+但继承noncopable看上去更清晰.
+相比声明拷贝构造，赋值操作符为私有函数, 还要添加默认构造函数，使用noncopyable要简单的多.
+
+http://www.boost.org/doc/libs/1_53_0/boost/noncopyable.hpp
+
+//  Boost noncopyable.hpp header file  --------------------------------------//
+
+//  (C) Copyright Beman Dawes 1999-2003. Distributed under the Boost
+//  Software License, Version 1.0. (See accompanying file
+//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+//  See http://www.boost.org/libs/utility for documentation.
+
+#ifndef BOOST_NONCOPYABLE_HPP_INCLUDED
+#define BOOST_NONCOPYABLE_HPP_INCLUDED
+
+namespace boost {
+
+//  Private copy constructor and copy assignment ensure classes derived from
+//  class noncopyable cannot be copied.
+
+//  Contributed by Dave Abrahams
+
+namespace noncopyable_  // protection from unintended ADL
+{
+  class noncopyable
+  {
+   protected:
+      noncopyable() {}
+      ~noncopyable() {}
+   private:  // emphasize the following members are private
+      noncopyable( const noncopyable& );
+      const noncopyable& operator=( const noncopyable& );
+  };
+}
+
+typedef noncopyable_::noncopyable noncopyable;
+
+} // namespace boost
+
+#endif  // BOOST_NONCOPYABLE_HPP_INCLUDED
+
+http://www.boost.org/doc/libs/1_53_0/libs/utility/noncopyable_test.cpp
+//  boost class noncopyable test program  ------------------------------------//
+
+//  (C) Copyright Beman Dawes 1999. Distributed under the Boost
+//  Software License, Version 1.0. (See accompanying file
+//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+//  See http://www.boost.org for most recent version including documentation.
+
+//  Revision History
+//   9 Jun 99  Add unnamed namespace
+//   2 Jun 99  Initial Version
+
+#include <boost/noncopyable.hpp>
+#include <iostream>
+
+//  This program demonstrates compiler errors resulting from trying to copy
+//  construct or copy assign a class object derived from class noncopyable.
+
+namespace
+{
+    class DontTreadOnMe : private boost::noncopyable
+    {
+    public:
+         DontTreadOnMe() { std::cout << "defanged!" << std::endl; }
+    };   // DontTreadOnMe
+
+}   // unnamed namespace
+
+int main()
+{
+    DontTreadOnMe object1;
+    DontTreadOnMe object2(object1);
+    object1 = object2;
+    return 0;
+}   // main
