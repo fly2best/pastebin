@@ -1,0 +1,22 @@
+
+摘自 孟岩
+http://blog.csdn.net/myan/article/details/5877305
+
+C++0X出来之后，网上对它的讨论已经很丰富，大大小小几十个新的特性，如果详细论述，当然又是一本（平庸的）厚书。但在我看来，其中很多特性是不用花太大精力的。分这么几类：
+
+1. 亡羊补牢的，早就应该有，没有就该遭雷劈的。比如unordered_table, shared_ptr/weak_ptr, regexp, auto/decltype。
+
+2. 锦上添花，可有可无的。比如 tuple, array container, range-base for, initializer lists, delegate/inheriting constructors, nullptr等等。
+
+3. 犄角旮旯，库开发专用工具，一般不推荐使用的：如static_assert、可变模板参数等。
+
+4. 还不成熟的，没有完全想清楚的：主要是 thread，其中的 future, promise等抽象，勇气可嘉，但有早产嫌疑，仍需留院观察。
+
+那么C++0X中真正的主角，值得你投入精力去学习的，有可能对你的编程实践构成重大影响的，我认为就三个东西：
+
+1. Rvalue reference;
+
+2. function/bind;
+
+3. Lambda expression and closure.
+
