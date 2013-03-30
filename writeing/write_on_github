@@ -1,0 +1,32 @@
+
+今天整理资料时遇到一个问题，就是数学公式的生成.
+
+我搜了搜, 可以用
+
+Pandoc github pages jekyll
+-------------------------
+
+r + markdown
+http://www.yangzhiping.com/tech/pandoc.html
+http://www.yangzhiping.com/tech/r-markdown-knitr.html
+
+http://yangzetian.github.com/2012/04/15/jekyll-pandoc/
+这哥们提到的一个思路很好，很强大, 网站和source分开, 自己先在本定把pages生成好，然后再传上去.
+它是用了两个project, 另外一个哥们提到可以用两个分支.
+
+我还看到wiki, 也可以搭在github上,
+http://yangzetian.github.com/2012/07/05/notes-online/
+
+mathjax, kramdown
+-----
+mathjax, krmadown
+http://dasonk.github.com/blog/2012/10/09/Using-Jekyll-and-Mathjax/
+
+jekyll mathjax for github pages, 我没看懂怎么用.
+https://gist.github.com/liuminzhao/3976574
+
+
+使用r+markdwon 对我来说还是很有吸引力的, 但是实用为先, 先用mathjax搞起来再说.
+
+有空再去好好玩玩r + markdown.
+
