@@ -66,10 +66,12 @@ int bin_search_first(int key,int *p, int n)
     int l = 0;
     int r = n;
 
+    int first = -1;
     while (l < r) {
         int m = l + (r - l) / 2;
 
         if (p[m] == key) {
+            first = m;
             r = m;
         }
         else if (p[m] < key) {
@@ -81,11 +83,7 @@ int bin_search_first(int key,int *p, int n)
 
     assert(l == r);
 
-    if (p[r] == key)
-        return r;
-
-    return -1;
-
+    return first;
 }
 
 
@@ -97,12 +95,14 @@ int bin_search_last(int key,int *p, int n)
 
     int l = 0;
     int r = n;
+    int last = -1;
 
     while (l < r) {
         int m = l + (r - l) / 2;
 
         if (p[m] == key) {
             l = m + 1;
+            last = m;
         }
         else if (p[m] < key) {
             l = m + 1;
@@ -113,8 +113,5 @@ int bin_search_last(int key,int *p, int n)
 
     assert(l == r);
 
-    if (l != 0 && p[l - 1] == key) //少考虑一种情况
-        return l - 1;
-
-    return -1;
+    return last;
 }
