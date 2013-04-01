@@ -1,0 +1,195 @@
+
+常见的网络并发模型
+0.  迭代式
+    不是并发的, 一次服务一个用户,不适合长连接, 适合daytime write-only的短连接服务.
+1.  process-per-connection
+    使用计算量远远大于fork的开销, 入数据库服务器.适合长连接，不适合短连接, 以为fork开销大约求解sudoku的时间.
+2.  thread-per-connection
+
+
+
+这是我对unp 3th edition 第30章 提供程序做的实验
+是在一个机子上跑的
+client 用的是这个命令
+$ ./client 127.0.0.1 9999 5 500 4000
+
+fly2best@fly2best:~/code/unpv13e/server$ ./serv00 9999
+^C
+user time = 0.008, sys time = 0.136008
+fly2best@fly2best:~/code/unpv13e/server$ ./serv01  9999
+^C
+user time = 0.008, sys time = 0.368023
+fly2best@fly2best:~/code/unpv13e/server$ ./serv02  9999 15
+child 13558 starting
+child 13557 starting
+child 13559 starting
+child 13560 starting
+child 13566 starting
+child 13567 starting
+child 13569 starting
+child 13568 starting
+child 13565 starting
+child 13563 starting
+child 13571 starting
+child 13564 starting
+child 13570 starting
+child 13562 starting
+child 13561 starting
+^C
+user time = 0.004, sys time = 0.184011
+fly2best@fly2best:~/code/unpv13e/server$ ./serv03  9999 15
+child 13590 starting
+child 13594 starting
+child 13593 starting
+child 13592 starting
+child 13591 starting
+child 13595 starting
+child 13589 starting
+child 13596 starting
+child 13600 starting
+child 13597 starting
+child 13599 starting
+child 13598 starting
+child 13588 starting
+child 13587 starting
+child 13586 starting
+^C
+user time = 0.016001, sys time = 0.132008
+fly2best@fly2best:~/code/unpv13e/server$ ./serv04  9999 15
+child 13644 starting
+child 13650 starting
+child 13654 starting
+child 13657 starting
+child 13652 starting
+child 13653 starting
+child 13655 starting
+child 13651 starting
+child 13649 starting
+child 13656 starting
+child 13648 starting
+child 13658 starting
+child 13647 starting
+child 13646 starting
+child 13645 starting
+^C
+user time = 0, sys time = 0.180011
+fly2best@fly2best:~/code/unpv13e/server$ ./serv05  9999 15
+child 13671 starting
+child 13673 starting
+child 13674 starting
+child 13677 starting
+child 13678 starting
+child 13676 starting
+child 13683 starting
+child 13685 starting
+child 13682 starting
+child 13684 starting
+child 13672 starting
+child 13681 starting
+child 13680 starting
+child 13679 starting
+child 13675 starting
+^C
+user time = 0.008, sys time = 0.18001
+child 0, 1041 connections
+child 1, 992 connections
+child 2, 250 connections
+child 3, 97 connections
+child 4, 60 connections
+child 5, 28 connections
+child 6, 22 connections
+child 7, 4 connections
+child 8, 3 connections
+child 9, 3 connections
+child 10, 0 connections
+child 11, 0 connections
+child 12, 0 connections
+child 13, 0 connections
+child 14, 0 connections
+fly2best@fly2best:~/code/unpv13e/server$ ./serv06
+usage: serv06 [ <host> ] <port#>
+fly2best@fly2best:~/code/unpv13e/server$ ./serv06 9999
+^C
+user time = 0.044002, sys time = 0.224014
+fly2best@fly2best:~/code/unpv13e/server$ ./serv07 9999 15
+thread 0 starting
+thread 1 starting
+thread 8 starting
+thread 9 starting
+thread 12 starting
+thread 7 starting
+thread 4 starting
+thread 5 starting
+thread 2 starting
+thread 3 starting
+thread 6 starting
+thread 13 starting
+thread 10 starting
+thread 11 starting
+thread 14 starting
+^C
+user time = 0.016001, sys time = 0.192012
+thread 0, 186 connections
+thread 1, 170 connections
+thread 2, 174 connections
+thread 3, 175 connections
+thread 4, 169 connections
+thread 5, 172 connections
+thread 6, 167 connections
+thread 7, 182 connections
+thread 8, 155 connections
+thread 9, 185 connections
+thread 10, 150 connections
+thread 11, 157 connections
+thread 12, 163 connections
+thread 13, 143 connections
+thread 14, 152 connections
+fly2best@fly2best:~/code/unpv13e/server$ ./serv08 9999 15
+thread 0 starting
+thread 1 starting
+thread 6 starting
+thread 5 starting
+thread 4 starting
+thread 3 starting
+thread 2 starting
+thread 7 starting
+thread 8 starting
+thread 9 starting
+thread 10 starting
+thread 11 starting
+thread 12 starting
+thread 13 starting
+thread 14 starting
+^C
+user time = 0.032002, sys time = 0.188011
+thread 0, 175 connections
+thread 1, 163 connections
+thread 2, 168 connections
+thread 3, 163 connections
+thread 4, 174 connections
+thread 5, 163 connections
+thread 6, 159 connections
+thread 7, 179 connections
+thread 8, 164 connections
+thread 9, 175 connections
+thread 10, 173 connections
+thread 11, 170 connections
+thread 12, 160 connections
+thread 13, 170 connections
+thread 14, 144 connections
+
+
+cat models_of_concurrency | grep ^user | awk '{print $4 $8}' | sed 's/,/ /'| ~/code/test/add
+0.008000 0.136008 0.144008   //iterative
+0.008000 0.368023 0.376023   //fork per client request
+0.004000 0.184011 0.188011   //prefork with chlid call reaquest
+0.016001 0.132008 0.148009   //prefork with file locking
+0.000000 0.180011 0.180011   //prefork with pthread mutex locking
+0.008000 0.180010 0.188010   //prefork with pass descriptor 
+
+0.044002 0.224014 0.268016   //one thread per client
+0.016001 0.192012 0.208013   //prethread with mutex locking
+0.032002 0.188011 0.220013   //pththread with main call accept
+
+这是我在自己的机子上跑的数据, 创建线程的代价似乎要大一些, 这是为什么呢?
+再测测，再想想~~
