@@ -1,0 +1,8 @@
+
+git status
+
+如果有中文文件名，显示为乱码
+
+git config --global core.quotepath=false
+
+core.quotepath设为false的话，就不会对0x80以上的字符进行quote，中文显示正常。 
