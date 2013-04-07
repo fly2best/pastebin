@@ -1,0 +1,125 @@
+
+select 的缺点
+-------------
+
+1.  FD_SETSIZE, 我的系统上是1024.
+
+    但是FD_SETSIZE并不是一个进程所能打开的最大fd限制,
+    进程打开的最大FD 两个因素限制.
+    1. ulimit -n;  ; RLIMIT_NOFILE
+    2. /proc/sys/fs/nr_open
+
+    怎么增大FD_SETSIZE ? 
+        #define FD_SETSIZE xxxxxx
+        #include <sys/select.h>
+
+    from apue answer exe 14.3, but it says, linux 2.4.22 对此处理则不同
+
+    我没测过.
+
+2.  线性扫描fd_set
+    先不管系统怎么处理, fd_set的.
+    在返回可行fd_set集合的时候, 需要进行线性进行扫描才能获得结果.
+    在连接比较多, 但是活跃的连接不多的情况下, 这样的线性扫描效率是很低的.
+
+3.  传递fd_set
+    内核/用户空间传递fd_set是通过拷贝的方法.
+
+
+poll模型
+--------
+
+相较select,模型,没有FD_SETSIZE的限制.
+
+看poll的原型:
+int poll(struct pollfd *fds, nfds_t nfds, int timeout);
+
+poll的第一个参数, 是struct pollfd, 我们可以按需分配fds的大小，不受限与FD_SETSIZE
+
+但是, 依然存在select, 中的第2个和3个问题.
+
+epoll模型
+---------
+
+epoll_wait 只返回了可用的fd信息, 这样就不用遍历, 判断那个fd在fd_set中了, 这就是epoll高效的原因.
+
+epoll_ctl, 对于每次可关注的fd个数没有限制, 受限与系统最大的fd数.
+
+
+有个人写的分析, 我觉得还不错哈
+
+POLL/EPOLL对比：
+
+       表面上poll的过程可以看作是由一次epoll_create/若干次epoll_ctl/一次epoll_wait/一次close等系统调用构成，实际上epoll将poll分成若干部分实现的原因正是因为服务器软件中使用poll的特点（比如Web服务器）：
+
+       1，需要同时poll大量文件描述符;
+
+       2，每次poll完成后就绪的文件描述符只占所有被poll的描述符的很少一部分。
+
+       3，前后多次poll调用对文件描述符数组（ufds）的修改只是很小;
+
+       传统的poll函数相当于每次调用都重起炉灶，从用户空间完整读入ufds，完成后再次完全拷贝到用户空间，另外每次poll都需要对所有设备做至少做一次加入和删除等待队列操作，这些都是低效的原因。
+
+        epoll将以上情况都细化考虑，不需要每次都完整读入输出ufds，只需使用epoll_ctl调整其中一小部分，不需要每次epoll_wait都执行一次加入删除等待队列操作，另外改进后的机制使的不必在某个设备就绪后搜索整个设备数组进行查找，这些都能提高效率。另外最明显的一点，从用户的使用来说，使用epoll不必每次都轮询所有返回结果已找出其中的就绪部分，O（n）变O（1），对性能也提高不少。
+
+       此外这里还发现一点，是不是将epoll_ctl改成一次可以处理多个fd（像semctl那样）会提高些许性能呢？特别是在假设系统调用比较耗时的基础上。不过关于系统调用的耗时问题还会在以后分析。
+
+我是在这里看到的 http://kaiyuan.blog.51cto.com/930309/341121
+
+epoll的优点：
+1.支持一个进程打开大数目的socket描述符(FD)
+2.IO效率不随FD数目增加而线性下降
+3.使用mmap加速内核与用户空间的消息传递。
+
+用用epoll就知道, 前两点了, 第3点就要去看内核的实现了....
+
+还是http://kaiyuan.blog.51cto.com/930309/341121哪儿来的, 那篇文章总结的不错~~.
+
+
+Whats the difference between select() and poll()?
+--------------------------------------------------
+From Richard Stevens (rstevens@noao.edu):
+
+The basic difference is that select()'s fd_set is a bit mask and
+therefore has some fixed size.  It would be possible for the kernel to
+not limit this size when the kernel is compiled, allowing the
+application to define FD_SETSIZE to whatever it wants (as the comments
+in the system header imply today) but it takes more work.  4.4BSD's
+kernel and the Solaris library function both have this limit.  But I
+see that BSD/OS 2.1 has now been coded to avoid this limit, so it's
+doable, just a small matter of programming. :-)  Someone should file a
+Solaris bug report on this, and see if it ever gets fixed.
+
+With poll(), however, the user must allocate an array of pollfd
+structures, and pass the number of entries in this array, so there's
+no fundamental limit.  As Casper notes, fewer systems have poll() than
+select, so the latter is more portable.  Also, with original
+implementations (SVR3) you could not set the descriptor to -1 to tell
+the kernel to ignore an entry in the pollfd structure, which made it
+hard to remove entries from the array; SVR4 gets around this.
+Personally, I always use select() and rarely poll(), because I port my
+code to BSD environments too.  Someone could write an implementation
+of poll() that uses select(), for these environments, but I've never
+seen one. Both select() and poll() are being standardized by POSIX
+1003.1g.
+
+来自: http://www.unixguide.net/network/socketfaq/2.14.shtml
+
+
+
+打开的最大文件限制.
+
+1.  /proc/sys/fs/file-max
+
+    This file defines a system-wide limit on the number of open files for all processes.  (See  also  setr‐
+    limit(2),  which can be used by a process to set the per-process limit, RLIMIT_NOFILE, on the number of
+    files it may open.)  If you get lots of error messages about running out of file handles, try  increas‐
+    ing this value:
+
+    echo 100000 > /proc/sys/fs/file-max
+
+    The kernel constant NR_OPEN imposes an upper limit on the value that may be placed in file-max.
+
+    If  you increase /proc/sys/fs/file-max, be sure to increase /proc/sys/fs/inode-max to 3-4 times the new
+    value of /proc/sys/fs/file-max, or you will run out of inodes.
+

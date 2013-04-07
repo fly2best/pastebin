@@ -1,0 +1,48 @@
+
+epoll API 和 poll 的 API 是类似的, 监控多个文件描述符, 看是否进行I/O操作.
+epoll  可是是边沿触发或者水平触发, 可以很好的扩展到需要监控大规模文件描述符的情形.
+
+下面的系统调用提供了创建和管理epoll实例.
+*   epoll_create 创建一个epoll实例，并返回代表那个实例的文件描述符.
+*   通过epoll_ctl, 注册感兴趣的文件描述符.
+*   epoll_wait 等待 I/O 事件, 阻塞调用线程 直到有时间发生.
+
+
+
+typedef union epoll_data {
+    void        *ptr;
+    int          fd;
+    uint32_t     u32;
+    uint64_t     u64;
+} epoll_data_t;
+
+struct epoll_event {
+    uint32_t     events;      /* Epoll events */
+    epoll_data_t data;        /* User data variable */
+};
+
+
+int epoll_create(int size);  //返回epoll_fd
+
+int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
+op: EPOLL_CTL_ADD
+    EPOLL_CTL_MOD
+    EPOLL_CTL_DEL
+
+我的疑问是event里不是有一个fd吗，为什么再重复一次. 
+哈i see, event中的data中的fd不必要和参数中的fd一致, 虽然在大多数情况下他们是一致的.
+这样在 epoll_wait 返回的时候, 就可以从event 的data数据域中得到是哪个fd发生了事件.
+
+
+int epoll_wait(int epfd, struct epoll_event *events,
+                             int maxevents, int timeout);
+
+The  epoll_wait()  system call waits for events on the epoll(7) instance referred to by the file
+descriptor epfd.  The memory area pointed to by events will contain  the  events  that  will  be
+available for the caller.  Up to maxevents are returned by epoll_wait().  The maxevents argument
+must be greater than zero.
+
+epoll_wait 只返回了可用的fd信息, 这样就不用遍历, 判断那个fd在fd_set中了, 这就是epoll高效的原因.
+
+
+epoll_event中的data域,是存放数据极好的地方.
