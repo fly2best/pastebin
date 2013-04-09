@@ -15,7 +15,7 @@ select 的缺点
 
     from apue answer exe 14.3, but it says, linux 2.4.22 对此处理则不同
 
-    我没测过.
+    测过了, 在linux上确实不行.
 
 2.  线性扫描fd_set
     先不管系统怎么处理, fd_set的.
