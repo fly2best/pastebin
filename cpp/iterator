@@ -1,0 +1,46 @@
+
+迭代器按操作分类
+
+输入迭代器 读, 不能写; 只支持自增运算.
+
+输出迭代器 写，不能读; 只支持自增运算.
+
+前向迭代器 读和写; 只支持自增运算.
+
+双向迭代器 读和写; 支持自增和自减运算.
+
+随机访问迭代器 读和写; 支持完成的算数运算.
+
+
+一些预定义的迭代器
+按功能分类
+
+istream_iterator<double> eos;         // end-of-stream iterator
+istream_iterator<double> iit (cin);   // stdin iterator
+
+插入迭代器
+
+vector<int> firstvector;
+back_insert_iterator< vector<int> > back_it (firstvector);
+
+deque<int> firstdeque;
+front_insert_iterator< deque<int> > front_it (firstdeque);
+
+list<int> firstlist;
+insert_iterator< list<int> > insert_it (firstlist,it);
+
+
+这三种插入迭代器的构造，通常通过以下几个辅助函数完成.
+
+back_inserter
+    Construct a back insert iterator (function template)
+
+front_inserter
+    Constructs a front insert iterator (function template)
+
+inserter
+    Construct an insert iterator (function template)
+
+
+反向迭代器
+template <class Iterator> class reverse_iterator;
