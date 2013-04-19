@@ -1,0 +1,53 @@
+
+百度笔试题:
+
+为分析用户行为，系统常需存储用户的一些query，但因query非常多，故系统不能全存，设系统每天只存m个query，现设计一个算法，对用户请求的query进行随机选择m个，请给一个方案，使得每个query被抽中的概率相等，并分析之，注意：不到最后一刻，并不知用户的总请求量。
+
+
+http://en.wikipedia.org/wiki/Reservoir_sampling
+
+array R[k];    // result
+integer i, j;
+
+// fill the reservoir array
+for each i in 1 to k do
+    R[i] := S[i]
+done;
+
+// replace elements with gradually decreasing probability
+for each i in k+1 to length(S) do
+    j := random(1, i);   // important: inclusive range
+    if j <= k then
+        R[j] := S[i]
+    fi
+done
+
+
+证明:
+
+其实这个题目, 可以这么来想的, n个数中抽取k个数, 每个数被抽中的概率为k/n.
+
+如果n <= k显然是全抽了.
+
+如果,k < n
+
+用归纳法证明,
+对i = k 到 n, 有pi = k / i;
+pi, 是每个元素被抽中的概率.
+
+1.  当i=k时, 显然成立
+2.  设当i=m, 时有 pm = k / m;
+    当i = m + 1 时,
+    第m+1个元素被选中的概率是  k/(m+1).
+    第i(i <= k)个元素被选中的概率是 
+    = (k / m) * ( (k / (m + 1)) * (k - 1 / k) + (1 - k / (m + 1))
+    = k / m *  ( m / (m + 1))
+    = k / (m+1)
+
+    k / m, 第i个元素在第m次被选中的概率.
+    (k / (m + 1)) * (k - 1 / k), 第m+1个数被选中, 但是没有选中第i个元素.
+    (1 - k / (m + 1), 第m+1个数压根没被选中.
+
+so, 对i = k 到 n, 有pi = k / i;
+
+参考:http://bbs.csdn.net/topics/370249762
