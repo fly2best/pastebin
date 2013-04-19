@@ -1,0 +1,36 @@
+
+name_managling
+---------------
+
+目的是产生唯一的名字.
+
+c++中有命名空间, 类, 函数重载的概念.
+
+不同命名空间和类中的命名不冲突.
+
+但是编译器在生成代码的时候，一定是绑定到了一个唯一的名字.
+否则无法区分调用的是哪个函数.
+
+因此需要name_managling.
+
+name_managling可能包含了以下信息:
+linkage type, scope, calling convention, number of arguments, type of arguments etc.
+
+
+固体规则可参见[1],[2]
+
+
+demanaging
+----------
+*   c++filt   // man c++filt
+*   nm -C     // man nm
+*   abi::__cxa_demangle  [4]
+
+
+参考资料:
+
+[1]:http://www.int0x80.gr/papers/name_mangling.pdf
+[2]:http://en.wikipedia.org/wiki/Name_mangling
+[3]:man nm
+[4]:http://stackoverflow.com/questions/12877521/human-readable-type-info-name
+
