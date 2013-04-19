@@ -1,0 +1,60 @@
+
+
+does presence of mutex help getting rid of volatile key word ?
+--------------------------------------------------------------
+
+There are 2 basically unrelated items here, that are always confused.
+
+    volatile
+    threads, locks, memory barriers, etc.
+
+volatile is used to tell the compiler to produce code to read the variable from memory, not from a register. And to not reorder the code around. In general, not to optimize or take 'short-cuts'.
+
+memory barriers (supplied by mutexes, locks, etc), as quoted from Herb Sutter in another answer, are for preventing the CPU from reordering read/write memory requests, regardless of how the compiler said to do it. ie don't optimize, don't take short cuts - at the CPU level.
+
+Similar, but in fact very different things.
+
+In your case, and in most cases of locking, the reason that volatile is NOT necessary, is because of function calls being made for the sake of locking. ie:
+Normal function calls affecting optimizations:
+
+external void library_func(); // from some external library
+
+global int x;
+
+int f()
+{
+   x = 2;
+   library_func();
+   return x; // x is reloaded because it may have changed
+}
+
+unless the compiler can examine library_func() and determine that it doesn't touch x, it will re-read x on the return. This is even WITHOUT volatile.
+Threading:
+
+int f(SomeObject & obj)
+{
+   int temp1;
+   int temp2;
+   int temp3;
+
+   int temp1 = obj.x;
+
+   lock(obj.mutex); // really should use RAII
+      temp2 = obj.x;
+      temp3 = obj.x;
+   unlock(obj.mutex);
+
+   return temp;
+}
+
+After reading obj.x for temp1, the compiler is going to re-read obj.x for temp2 - NOT because of the magic of locks - but because it is unsure whether lock() modified obj. You could probably set compiler flags to aggressively optimize (no-alias, etc) and thus not re-read x, but then a bunch of your code would probably start failing.
+
+For temp3, the compiler (hopefully) won't re-read obj.x. If for some reason obj.x could change between temp2 and temp3, then you would use volatile (and your locking would be broken/useless).
+
+Lastly, if your lock()/unlock() functions were somehow inlined, maybe the compiler could evaluate the code and see that obj.x doesn't get changed. But I guarantee one of two things here: - the inline code eventually calls some OS level lock function (thus preventing evaluation) or - you call some asm memory barrier instructions (ie that are wrapped in inline functions like __InterlockedCompareExchange) that your compiler will recognize and thus avoid reordering.
+
+EDIT: P.S. I forgot to mention - for pthreads stuff, some compilers are marked as "POSIX compliant" which means, among other things, that they will recognize the pthread_ functions and not do bad optimizations around them. ie even though the C++ standard doesn't mention threads yet, those compilers do (at least minimally).
+So, short answer
+
+you don't need volatile.
+------------------------
