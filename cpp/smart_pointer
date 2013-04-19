@@ -1,0 +1,80 @@
+
+auto_ptr的坑
+-----------
+
+auto_ptr
+不能被存放在容易中, 容易要求所保存的类型定义赋值和赋值操作符.
+使它们表现的类似于内置类型的操作符.
+在复制之后, 两个对象必须具有相同值.
+
+auto_ptr 不具备这个特性.
+
+auto_ptr 赋值的时候, 会窃取对象.
+
+
+scoped_ptr
+---------
+
+boost中的scope_ptr和auto_ptr的区别, autoptr 在复制是会使源auto_ptr自动交出所有权, 而socpe_ptr不允许复制.
+
+使用场景:
+*   在有可能抛出异常的作用域中使用指针时
+*   函数中存在多条控制路径(不是很理解)
+*   动态分配对象的生存期限限制在一个特定的作用域之内
+*   异常安全非常重要时(始终如此)
+
+
+shared_ptr
+------------
+
+增加引用计数.
+使用场景:
+*   当对象拥有多个客户，但没有明确的拥有者时
+*   当在标准库中存放指针时
+*   当在库之间来回传递对象而没有所有权时
+*   当管理一些需要特殊清理操作的资源时(通过自定义删除操作)
+
+weaked_ptr
+----------
+不增加引用计数, 可以通过lock从weak_ptr转化为shared_ptr
+
+使用场景:
+*   需要打破循环依赖
+*   需要使用共享资源而不是共享所有权时
+*   可以避免悬空指针
+
+
+enabled_from_this
+-----------------
+
+
+标准库新添加的unique_ptr 
+------------------------
+
+In C++0x std::auto_ptr will be deprecated in favor of std::unique_ptr. The choice of smart pointer will depend on your use case and your requirements, with std::unique_ptr with move semantics for single ownership that can be used inside containers (using move semantics) and std::shared_ptr when ownership is shared.
+
+unique_ptr 和auto_ptr 一样具有移动语义, unique_ptr 可以管理 array.
+
+a unique_ptr class for handling arrays must have a different implementation from that of the single object unique_ptr. The designers of unique_ptr solved this problem by defining a partial specialization for unique_ptr<T[]>:
+
+unique_ptr <int[]> intarr (new int[4]); //array version of unique_ptr
+arrup[0]=10;
+arrup[1]=20;
+arrup[2]=30;
+arrup[3]=40;
+
+The trailing [] after the type T indicates that the array specialization of unique_ptr (no dereference, no conversions, has indexing) shall be used. The default deleter for the array specialization of unique_ptr calls delete[].
+
+这个移动语义的东西的东西，我现在还理解的不好，会过头来再整理.
+
+
+智能指针
+-------------
+这块的东西虽然很早就知道, 但一直没有在项目中使用过.
+
+怎么会想起来整理呢?
+1.  muduo的代码中大量用了智能指针, 虽然作者强调不要直接使用指针, 并搬出了<<c++沉思录>>作者夫妇的观点，但还是差点被我无视，sbbbs.
+
+会在项目中用吗?
+
+2.   会, 有同学中百度实习二面中问到了如何检测内存泄漏. 我恍然想起如果智能指针用的好的话，几乎不会有内存泄漏问题. 这才下定决心把智能指针用起来.
