@@ -1,0 +1,51 @@
+
+call convention
+--------------
+调用约定, 包含参数的传递方法(寄存器, 堆栈), 传递顺序(从左到右，从右到左), 谁清理参数占用的栈空间, 函数返回值的传递方法(寄存器, 栈).
+
+
+常见的调用约定包括
+cdecal, thiscall, fastcall
+
+cdecl(支持变参)
+---------------
+
+This calling convention is the default for C programs and also global functions in C++ programs. Generally the function arguments are passed on the stack in reverse order so that the callee can access them in the correct order. The caller is responsible for popping the arguments after the function returns, which makes it possible to use the ... to send runtime defined arguments. Return values are returned in the registers.
+
+不同的编译器实现不一样, 只列出的 GCC g++/linux
+
+GCC g++ / Linux
+
+    Arguments are pushed on the stack in reverse order.
+    The caller pops arguments after return.
+    Primitive data types, except floating point values, are returned in EAX or EAX:EDX depending on the size.
+    float and double are returned in fp0, i.e. the first floating point register.
+    All structures and classes are returned in memory regardless of complexity or size.
+    When a return is made in memory the caller passes a pointer to the memory location as the first parameter (hidden). The callee populates the memory, and returns the pointer. The callee pops the hidden pointer from the stack when returning.
+    Classes that have a destructor are always passed by reference, even if the parameter is defined to be by value. 
+
+thiscall
+--------
+
+This calling convention was introduced with C++. The only sure thing about it is that arguments are pushed on the stack in reverse order and that the caller passes the object pointer to the function in some way or other.
+
+GCC g++ / Linux
+
+    Arguments are pushed on the stack in reverse order.
+    The object pointer is pushed on the stack as the first parameter.
+    The caller pops arguments after return.
+    Primitive data types, except floating point values, are returned in EAX or EAX:EDX depending on the size.
+    float and double are returned in fp0, i.e. the first floating point register.
+    All structures and classes are returned in memory regardless of complexity and size.
+    When a return is made in memory the caller passes a pointer to the memory location as the first parameter (hidden). The callee populates the memory, and returns the pointer. The callee pops the hidden pointer from the stack when returning.
+    Classes that have a destructor are always passed by reference, even if the parameter is defined to be by value. 
+
+
+fastcall  (我在内核代码中看到过)
+--------
+
+This is a special calling convention that is designed for speed. It is rarely used so I haven't studied it closely, but I understand that the first arguments are passed in registers while the rest are pushed on the stack as normal.
+
+
+摘自:
+http://www.angelcode.com/dev/callconv/callconv.html
