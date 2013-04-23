@@ -1,0 +1,9 @@
+
+TIME_WAIT
+
+主动关闭端受到FIN后从FIN_WAIT2 进入 TIME_WAIT状态.
+
+1.  可靠的TCP关闭, 防止ACK丢失, 可以处理重传FIN.
+2.  防止串话, 防止残留在网络中的数据报,  干扰新的会话.
+
+TIME_WAIT状态等待2MSL, 为什么呢?
