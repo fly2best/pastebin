@@ -1,0 +1,26 @@
+
+c++ new, delete
+
+A * pA = new A();
+发生三件事情
+1. 调用std::operator new分配内存
+2. 掉用构造函数，进行初始化
+3. 返回指向新分配并构造的对象的首地址
+
+大致等于以下代码
+    A * pA = static_cast<A *>(std::operator new(sizeof(A)));
+    new (pA) A; //没法直接调用构造函数, 用了placement new
+
+delete pA;
+1.调用析构函数
+2.调用std::operator delete释放内存
+
+大致等于以下代码
+    pA->~A(); //可以直接调用析构函数
+    std::operator delete(pA);
+
+---------------
+怎么把vector的内存分配到一个实现分配好的buffer上去?
+定义自己的allocator,  allocate 函数返回执行已经分配好的内存.
+
+如果是可以修改源代码的类，直接重载new操作符因该是最简便的.
