@@ -1,0 +1,9 @@
+
+the near-term future performance growth drivers are:
+
+Hyperthreading is about running two or more threads in parallel inside a single CPU.
+
+Multicore is about running two or more actual CPUs on one chip.
+
+on-die cache sizes can be expected to continue to grow, at least in the near term
+
