@@ -1,0 +1,44 @@
+
+
+当我们按下power_on 的时候
+1. 加载BIOS, BIOS是一个程序, 它会进行硬件检测和根据启动顺序配置,读取第一个启动盘的MBR.
+2. MBR is short for master boot record, 会运行其MBR内的boot loader(like grub)
+3. 根据grub 选择, 选择了某个分区上的boot loader, 这个boot loader 会加载kernel.
+4. kernel, 会检测硬件和加载驱动程序, 成公共调用init进程.
+5. init进程会跟居run-level信息, 加载对应level的script
+6. init 执行重灌模拟程序mingetty 来灯笼login进程, 等待用户登录.
+
+摘自<<鸟哥的linux私房菜>>
+
+
+
+计算机是如何启动的?
+http://www.ruanyifeng.com/blog/2013/02/booting.html
+
+Canson 说：
+    引用Mike的发言：
+    For UEFI, it is a different story.
+的确，或者说即使不是UEFI，Legacy的Bios的故事也有别的变种。BIOS 工程师路过
+
+linux启动流程
+http://www.ruanyifeng.com/blog/2013/08/linux_boot_process.html
+Terry 说：
+这是 SysV init 别忘了提醒大家还有 Ubuntu 的 Upstart 和未来的标准 systemd （Arch Linux, Fedora 和 Suse 已经在用了）。
+2013年8月17日 19:27 | 档案 | 引用
+Terry 说：
+提到 initrd 不得不提一下这货从 ramdisk 到 ramfs 的转变。详见： https://www.kernel.org/doc/Documentation/filesystems/ramfs-rootfs-initramfs.txt
+另外 IBM DeveloperWorks 上有几篇关于 Linux 启动流程和 initrd / initramfs 的文章很不错，可以参考来补充这篇。
+
+Linux initial RAM disk (initrd) overview
+http://www.ibm.com/developerworks/library/l-initrd/index.html
+
+Linux 引导过程内幕
+从主引导记录到第一个用户空间应用程序的指导
+http://www.ibm.com/developerworks/cn/linux/l-linuxboot/
+
+
+ramdisk简介
+http://linux.chinaunix.net/techdoc/beginner/2008/01/29/977725.shtml
+
+ramfs, rootfs and initramfs
+https://www.kernel.org/doc/Documentation/filesystems/ramfs-rootfs-initramfs.txt
