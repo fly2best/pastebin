@@ -1,0 +1,37 @@
+
+以下内容摘自
+http://gcc.gnu.org/onlinedocs/cpp/Macro-Pitfalls.html#Macro-Pitfalls
+
+operator percedence problems
+===========================
+#define ceil_div(x, y) (((x) + (y) - 1) / (y))
+
+in order to swallowing the semicolon.
+=====================================
+ #define SKIP_SPACES(p, limit)     \
+ do { char *lim = (limit);         \
+      while (p < lim) {            \
+        if (*p++ != ' ') {         \
+          p--; break; }}}          \
+ while (0)
+
+with the help of do {} while(0)
+
+这样在调用if else的时候, 不会出问题.
+if (*p != 0)
+       SKIP_SPACES (p, lim);
+ else ...
+
+在内核代码中看到大量这样的宏, 原来是这样子.
+
+Duplication of Side Effects
+===========================
+ #define min(X, Y)  ((X) < (Y) ? (X) : (Y))
+
+避免x, y被求值两次.
+ #define min(X, Y)                \
+ ({ typeof (X) x_ = (X);          \
+    typeof (Y) y_ = (Y);          \
+    (x_ < y_) ? x_ : y_; })
+
+typeof 是gcc的扩展.
