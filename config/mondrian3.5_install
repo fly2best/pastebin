@@ -1,0 +1,213 @@
+
+
+mondrian3.5 编译安装, eclipse环境配置, xmla接口配置.
+
+一. 装载数据
+
+1.安装mysql
+2.创建foodmart数据库
+3.下载mysql的jdbc驱动，放到lib/third目录下
+4. mondiran3.5 不知道为什么没有FoodMartCreateData.sql
+   我是从老版本中找到的, 3.2 ?
+5. 把lib/modrian.war 中的lib全解压来,放到lib/third目录下
+
+java -cp "lib/*:lib/third/*" mondrian.test.loader.MondrianFoodMartLoader -tables -data -indexes  -jdbcDrivers="com.mysql.jdbc.Driver" -inputFile=demo/FoodMartCreateData.sql -outputJdbcURL="jdbc:mysql://localhost/foodmart?user=root&password=111111" 
+
+二. mondrian.war 安装运行
+    改动各种配置文件.
+
+1. WEB-INF/queryies/*.jsp
+
+    设置 jdbcDriver, jdbcurl, catlogUri.
+    for example:
+<jp:mondrianQuery id="query01" jdbcDriver="com.mysql.jdbc.Driver" jdbcUrl="jdbc:mysql://localhost/foodmart?user=root&password=111111" catalogUri="/WEB-INF/queries/FoodMart.xml">
+
+2. 修改WEB-INF/datasources.xml
+
+        <DataSourceInfo>Provider=mondrian;Jdbc=jdbc:mysql://localhost/foodmart;JdbcUser=root;JdbcPassword=111111;JdbcDrivers=com.mysql.jdbc.Driver;Catalog=/WEB-INF/queries/FoodMart.xml</DataSourceInfo>
+
+3. 修改WEB-INF/web.xml
+    
+  <context-param>
+    <param-name>connectString</param-name>
+    <param-value>Provider=mondrian;Jdbc=jdbc:mysql://localhost/foodmart;JdbcUser=root;Jdbcpassword=111111;JdbcDrivers=com.mysql.jdbc.Driver;Catalog=/WEB-INF/queries/FoodMart.xml;</param-value>
+  </context-param>
+
+  <servlet>
+    <servlet-name>MondrianXmlaServlet</servlet-name>
+    <servlet-class>mondrian.xmla.impl.DynamicDatasourceXmlaServlet</servlet-class>
+    <init-param>
+      <param-name>DataSourcesConfig</param-name>
+        <!-- url指向datasource, 因为在WEB-INF下的文件无法动过url访问, so，我就移动了个位置 -->
+        <!-- 在webapp时, 不要这个参数也可以, 但是后来在eclipse中配置运行时，却出错, 所有我又加上了-->
+      <param-value>http://localhost:8080/mondrian/datasources.xml</param-value>
+    </init-param>
+  </servlet>
+
+4. 修改mondiran.properties
+
+   摘自:http://spagobi.blogspot.com/2010/07/how-to-install-config-mondrian-olap.html
+5.  Explode the war file (mondrian-3.2.0.13661/lib/mondrian.war) to the folder at
+        tomcat_home/webapps/mondrian;
+
+    Delete the following jar files:
+        saaj-api.jar
+        saaj-ri.jar
+        xalan.jar
+    from the folder:
+        tomcat_home/webapps/mondrian/WEB-INF/lib
+
+    Copy from the folder axis-1_4/lib these jar files:
+        axis.jar
+        commons-discovery-0.2.jar
+        saaj.jar
+        jaxrpc.jar
+        wsdl4j-1.5.1.jar
+    to the folder:
+        tomcat_home/webapps/mondrian/WEB-INF/lib
+
+    Also copy MySQL jdbc driver jar file to the folder ;
+        tomcat_home/webapps/mondrian/WEB-INF/lib
+
+这样, 可以玩起来了, 除了
+XML for Analysis tester
+其它都可以访问了
+
+那个XML for Analysis tester, 没管了.
+
+修改mondiran/WEB-INF/classes/log4j.properties, 把日志输入级别调为DEBUG,可以看到日志输出, 可以大概了解执行过程.
+
+
+三. 源码编译mondrian
+
+    安装一系列工具, 让后ant, 等会就行了.
+
+    下载JDK的三个版本, 1.5, 1.6, 1.7
+    我是用1.7作为主版本, 编译的mondrian
+    export JAVA_HOME_15=/home/fly2best/Downloads/jdk1.5.0_22
+    export JAVA_HOME_16=/home/fly2best/Downloads/jdk1.6.0_45
+    export JAVA_HOME_17=/home/fly2best/Downloads/jdk1.7.0_25
+    export JAVA_HOME=$JAVA_HOME_17
+
+    会生成部分代码和配置文件, 还会下载大量的第三方的jar.
+
+四. 在eclisp中配置
+
+    下载tomcat, 5.5.30, 太新的版本不行, 太老的版本没试.
+    eclipse中的jdk版本用1.7;
+    
+    1. 简历一个tomcat项目,
+    2. 导入mondrian/src/main中的所有代码.
+    3. 把mondrian/lib 下的包全部拷贝到项目的lib目录下
+    4. 把mondrain/worbench/plugin/下的jar, 拷贝到项目的lib目录下
+    5. 把jar全部附加到项目buildpath
+    6. 这时应该有两个文件有错误.
+        mondiran.olap4j.FactorJdbc4Impl.java
+        mondiran.olap4j.FactorJdbc3Impl.java
+        这时不同版本的jdk, jdbc版本不一致造成的
+        因为我们的jdk是1.7, 用的应该是4.1, 4plus, 所以直接删除另外两个就好了
+    7. 把ant编译生成的class文件中
+        mondrian/resource/MondrianResource_en_US.properties
+        mondrian/resource/MondrianResource.properties
+       加入到项目中, 如果缺少的话, 运行的时候，会出错.
+    8. 用OLAP4j 结构测试一下
+        在项目中添加唉一个Test类
+
+    Exception in thread "main" mondrian.olap.MondrianException: Mondrian Error:Internal error: Schema version '3.x' is later than schema version '3.x' supported by this version of Mondrian
+        
+        从mondiran.war中解压version.txt, 加入项目.
+
+        应该没什么其他问题了.
+        如果一些正常的话, 应该能够编译成功, 运行输入结果.
+
+
+        package test;
+        import org.olap4j.*;
+        import org.olap4j.metadata.Member;
+        import java.sql.*;
+
+        public class Test {
+            public static void main(String[] args) throws ClassNotFoundException, SQLException {
+                Class.forName("org.olap4j.driver.xmla.XmlaOlap4jDriver");
+                //		Connection connection =
+                //		    DriverManager.getConnection(
+                //		        "jdbc:xmla:Server=http://localhost:8080/mondrian/xmla");
+                //		
+                Class.forName("mondrian.olap4j.MondrianOlap4jDriver");
+                Connection connection =
+                    DriverManager.getConnection(
+                            "jdbc:mondrian:"
+                            + "Jdbc='jdbc:mysql://localhost/foodmart?user=root&password=111111';"
+                            + "Catalog='file:/home/fly2best/data/code/workspace/mondrian/WEB-INF/queries/FoodMart.xml';"
+                            + "JdbcDrivers=com.mysql.jdbc.Driver;");
+
+                OlapConnection olapConnection = connection.unwrap(OlapConnection.class);
+                OlapStatement statement = olapConnection.createStatement();
+                CellSet cellSet =
+                    statement.executeOlapQuery(
+                            "SELECT {[Measures].[Unit Sales]} ON 0,\n"
+                            + "{[Product].Children} ON 1\n"
+                            + "FROM [Sales]");
+                for (Position row : cellSet.getAxes().get(1)) {
+                    for (Position column : cellSet.getAxes().get(0)) {
+                        for (Member member : row.getMembers()) {
+                            System.out.println(member.getUniqueName());
+                        }
+                        for (Member member : column.getMembers()) {
+                            System.out.println(member.getUniqueName());
+                        }
+                        final Cell cell = cellSet.getCell(column, row);
+                        System.out.println(cell.getFormattedValue());
+                        System.out.println();
+                    }
+                }
+
+            }
+        }
+
+    9. 配置xmla接口
+       
+        配置如下的web.xml
+    
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE web-app
+        PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+
+
+        <web-app> 
+
+        <context-param>
+        <param-name>connectString</param-name>
+        <param-value>Provider=mondrian;Jdbc=jdbc:mysql://localhost/foodmart;JdbcUser=root;Jdbcpassword=111111;JdbcDrivers=com.mysql.jdbc.Driver;Catalog=/WEB-INF/queries/FoodMart.xml;</param-value>
+        </context-param>
+
+        <servlet>
+        <servlet-name>MondrianXmlaServlet</servlet-name>
+        <servlet-class>mondrian.xmla.impl.DynamicDatasourceXmlaServlet</servlet-class>
+        <init-param> -->
+        <param-name>DataSourcesConfig</param-name> -->
+        <param-value>http://localhost:8080/mondrian/datasources.xml</param-value>
+        </init-param>
+
+        </servlet>
+
+        <servlet-mapping>
+        <servlet-name>MondrianXmlaServlet</servlet-name>
+        <url-pattern>/xmla</url-pattern>
+        </servlet-mapping>
+
+        </web-app>
+
+    启动tomcat.
+    因该就可以通过http://localhost:8080/mondiran/xmla 访问xmla结构了
+    修改上述的test程序, 使用xmla接口, 应该可以访问成功.
+
+    10. 修改日志输出
+        也不知道为什么 用的是log4j.xml, 我用log4j搞了半天.
+        http://source.pentaho.org/svnroot/bi-platform-v2/tags/4.5.0-stable/bi-platform-plugin-actions/res/log4j/log4j.xml
+
+    11. 在加入mondrian.properties 后, 报找不到defaultrules.xml
+        我也不知道mondrian.properties有是什么用, 我看到webapp/mondiran目录下有, 我就加进来了, 谁知道报错了, 汗...
+        我就从mondrian.war中扣出来了，从nondrina.war中defaultrules.xml 和 defaultrulesschema.xml 加入项目.
