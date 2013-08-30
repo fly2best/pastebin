@@ -1,0 +1,18 @@
+
+lca summary
+
+1. tarjan
+摘自:http://scturtle.is-programmer.com/posts/30055
+    tarjan算法的步骤是(当dfs到节点u时):
+    1 在并查集中建立仅有u的集合,设置该集合的祖先为u
+    1 对u的每个孩子v:
+       1.1 tarjan之
+       1.2 合并v到父节点u的集合,确保集合的祖先是u
+    2 设置u为已遍历
+    3 处理关于u的查询,若查询(u,v)中的v已遍历过,则LCA(u,v)=v所在的集合的祖先
+
+2. Reduction from LCA to RMQ
+http://community.topcoder.com/tc?module=Static&d1=tutorials&d2=lowestCommonAncestor#Reduction%20from%20LCA%20to%20RMQ
+
+只要那个数组E, H就行了吧.
+
