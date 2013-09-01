@@ -1,0 +1,9 @@
+外连接
+在做连接查询的时候, 可能某些列在另外一个表中没有匹配的行.
+如果想在查询的时候, 把这些东西显示出来, 就要做外连接.
+
+如果,想把左边的表中没有匹配的行显示输出来, 那么就是 left outer join
+同理 right outer join
+如果想都显示出来, 可以用full outer join.
+
+http://en.wikipedia.org/wiki/Join_(SQL)#Outer_join

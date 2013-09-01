@@ -1,0 +1,14 @@
+
+select 的格式
+
+select
+from
+where
+group by
+having
+order by
+limit
+
+执行顺序,select是最后执行的.
+后面自居的执行顺序和书写顺序一致.
+
