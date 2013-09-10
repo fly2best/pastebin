@@ -54,7 +54,7 @@ so
 基类的private成员, 只有基类及其友元可以访问.
 与派生类的继承方式没有关系.
 
-基类的public 成员和 private成员和继承方式的关系:
+基类的public 成员和 protected成员和继承方式的关系:
 
 public 继承: 不变
 
