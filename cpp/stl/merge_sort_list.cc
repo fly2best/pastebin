@@ -31,3 +31,20 @@ void list<T, Alloc>::sort() {
         counter[i].merge(counter[i-1]);
     swap(counter[fill-1]);
 }
+
+// 时间复杂度分析:
+// 结果肯定是O(nlogn), 但怎么算出来的呢.
+
+// 对于每个counter, 从满变成空的时候, 会有一次merge.
+// 现在要分析的就是
+// 1. 从满变成空，多少次?
+// 2. 每次merge的时候, 时间复杂的是多少?
+
+// 问题2很容易回答, 对于第i个counter, 2^i个元素, 加上carray中的2^i个元素, merge的时间复杂度为O(2^(i+1))
+// 问题1呢, 对于第i个couter, 从满变成空的次数为n/(2^(i+1))次(设n为2^k)
+
+// 如此, 对于第i个couter的所花费的总时间为O(n/2^(i+1)) * O(2^(i+1))
+// 总共有O(logn)个counter
+// 因此时间复杂度为O(nlogn)
+//
+// 汇聚涓涓细流
