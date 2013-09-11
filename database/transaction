@@ -1,0 +1,29 @@
+
+事物的四个性质 ACID.
+
+A, atomicity, 原子性.
+事务是数据库的逻辑工作单位, 事物中包括的诸操作, 要么都做, 要么都不做.
+
+C, consistenency, 一致性
+一致性是指, 事物执行的结果必须是使数据库从一个一致性状态变到另外一个一致性状态.
+
+I, isolation, 隔离性
+一个事物的执行不被其他事物干扰, 即一个事物内部的操作及使用的数据对其他并发事务是隔离的.
+并发执行的各个事物是互相不干扰的.
+
+D, durability, 持久性
+持久性, 指一个事务一旦提交, 它对数据库中数据的改变就应该是永久的.
+接下来的其他操作和故障不应该对其执行结果有任何影响.
+
+事务的隔离性和一致性需要并发控制介入.
+
+http://en.wikipedia.org/wiki/Isolation_(database_systems)#Isolation_levels
+
+Isolation level         Dirty reads  Non-repeatable reads  Phantoms
+Read Uncommitted        may occur    may occur             may occur
+Read Committed          -            may occur             may occur
+Repeatable Read         -            -                     may occur
+Anomaly Serializable    -            -                     -
+
+
+其实我觉得这个隔离性还是蛮重要的, 正确理解对并发编程是有益的.
