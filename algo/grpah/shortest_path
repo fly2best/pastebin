@@ -1,0 +1,67 @@
+
+
+单源最短路径
+
+1. 如果图是不带权的, bfs就可以找出最短路径
+
+2. 如果是带权的, 权都不为负数的话, 可以用dijksta算法
+
+    //摘自 Algorithms
+    //实现觉得这个实现很漂亮
+    proceduce dijkstra(G, l, s)
+    input: Graph G= {V, E}, directed or undirected
+            postitive edge lengths e 属于E, v 属于V
+    ouput: for all verices u reachable froms, 
+           dist(u) is set to distance from s to u
+           prev(u) is the previous point in the path
+
+            for all v in V
+                dist[v] = INF
+                prev[v] = NIL
+
+            dist[s] = 0
+
+            H = makequeue(V) // use dist as key
+
+            while H is not empty
+                u = deletemin(H)
+                for all edges(u, v) in E
+                    if dist[v] > dist[u] + l(u, v)
+                        dist[v] = dist[u] + l(u, v)
+                        prev[v] = u
+                        decreasekey(v)
+    时间复杂度分析
+    makequeue, O(|V|) insert
+    decreatekey, O(|E|)
+    deletemin, O(|V|)
+
+    so,对于binary heap, 每个操作的时间复杂度都是log(|V|)
+    时间复杂度是O((|V|+|E|)log(|V|))
+
+    beautiful algorithm.
+
+3. bellman-ford
+    这货可以处理有负向边的情况, 如果有负向环还可以检测出来.
+    代价是时间复杂度
+
+    看看关键思路
+    为什么dijksta不能处理负向边的情况呢?
+    dijksta算法的正确性的要求,
+    一旦从queue中选出dist最小的结点, 这个结点的dist不会更小了.
+    但是如果存在负向边的话, 这个条件就不满足.
+    这是dijkstra更新dist的顺序要求的.
+
+    bellman-ford
+    每次对所有的e属于E,都更新dist, 更新|V|-1次.
+    更新i次, 经过i个结点的可达最短路径可以被找出来.
+    时间复杂度O(|V|*|E|)
+
+    检测负向环
+    对于graph G, 最多经过|V|-1个结点可到达任意一个结点
+    如果, bellman-ford结束后, 在更新一把, 如果dist有变化, 则说明有负向环
+
+4. shortest path in dag
+
+     按照topologically的顺序update dist.
+     这样可以保证在更新某个结点以前, 其祖先结点的最短路是已经求出来的.
+     时间复杂读O(V+E)

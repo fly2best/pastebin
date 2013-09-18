@@ -1,0 +1,30 @@
+
+depth first sort
+深度优先搜索
+
+dfs是一种很好很强大的裸搜算法
+时间复杂度O(V+E)
+
+在dfs树上有三种边
+1.  tree edge
+    正向边, 指向了孩子结点
+2.  back edge
+    反向边, 指向了祖先结点
+3.  cross edge
+    即不是指向孩子结点, 也不指向祖先结点.
+    指向了另外一个子树上一个完全已经访问过得结点.
+
+dfs 可以解决的问题
+1.  graph是否有环
+    在遍历的时候, 如果back edge, 
+    则存在一个从anscetor->current, current->anscetor的一个环.
+
+    怎么判断是否是祖先结点, prev num 已经有了, post num还没有, 
+    算法导论好像用了颜色, 颜色是灰色的, 还没有从dfs返回.
+
+2.  topologically sort
+    dag上的拓扑排序
+    因为没有环, 即没有back edge
+    如果存在edge(u, v)
+    post[u] > post[v]
+    所以在post num 的下降排序是一个拓扑排序.

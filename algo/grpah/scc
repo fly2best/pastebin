@@ -1,0 +1,18 @@
+
+strong connected compents
+
+有向图的强连通分量.
+
+方法可以用两趟dfs, 或者tarjan方法
+
+先总结一下两趟dfs
+
+1. 求图的逆, dfs遍历, 在G的逆上，救出结点的postnum
+    根据dfs的性质, postnum最大一定在G的逆上，一定在source 强连通分量中.
+    也就是在G的sink 强连通分量上.
+2. 按照postnum从大到小的顺序, 在G上dfs, 可以发现每个强连通分量.
+    在dfs, 返回根结点之前, 一定可以把所有能访问的结点访问到.
+    即可以发现, sink compentend.
+    删除已经访问过的点, 就能找出所有的强连通分量
+
+时间复杂度O(V+E)

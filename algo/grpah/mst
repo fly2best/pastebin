@@ -1,0 +1,26 @@
+
+minmum spanning tree
+最小生成树
+
+最小生成树有两种算法
+kruskal, prim
+
+这两种方法背后都用到一个非常重要的性质.
+
+cut property
+
+Suppose edges X are part a minimum spaning tree of G(V,E).
+Pick any subset of nodes S for which X does not cross between S and V-S.
+and let e be the lightest edge cacross this partition.
+Then X U {e} is part of some MST.
+这个性质可以用反证法证明.
+
+kruskal算法
+先按照边排序, 选最小边, 如果边的两个定点不在一个集合里, 就加入同时更新集合.
+这里面会用到一个很爽的数据结构, 并查集合.
+
+
+prim算法
+和dijkstra类似, 只是权值不一样而已.
+在dijkstra算法里, 权值是dist[u]
+在prim算法里, 是partial mst 到其他部分的边权值.
