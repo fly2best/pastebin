@@ -1,0 +1,18 @@
+
+抽样方法
+//copy from head first statistics
+
+random sampling
+
+stratified sampling
+the population is split into similar groups that share similar characteristics.
+These charateristics or groups are called strata, and each individual group is called a stratum.
+
+cluster sampling
+cluster sampling is useful if the population has a number of similar
+groups or clusters. As an example, gumballs might be sold in packets,
+with each packet containing a similar number of gumballs with similar
+colors. Each packet would form a cluster.
+
+systematic sampling
+choose a number k, and sample every kth unit.
