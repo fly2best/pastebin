@@ -1,0 +1,13 @@
+
+The knapsack problem is interesting from the perspective of computer science for many reasons:
+
+    The decision problem form of the knapsack problem (Can a value of at least V be achieved without exceeding the weight W?) is NP-complete, thus there is no possible algorithm both correct and fast (polynomial-time) on all cases, unless P=NP.
+    While the decision problem is NP-complete, the optimization problem is NP-hard, its resolution is at least as difficult as the decision problem, and there is no known polynomial algorithm which can tell, given a solution, whether it is optimal (which would mean that there is no solution with a larger, thus solving the decision problem NP-complete).
+    There is a pseudo-polynomial time algorithm using dynamic programming.
+    There is a fully polynomial-time approximation scheme, which uses the pseudo-polynomial time algorithm as a subroutine, described below.
+    Many cases that arise in practice, and "random instances" from some distributions, can nonetheless be solved exactly.
+
+摘自:
+http://en.wikipedia.org/wiki/Knapsack_problem#Computational_complexity
+
+时间复杂度, 要好好再理理.
