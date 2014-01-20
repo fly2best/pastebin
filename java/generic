@@ -8,4 +8,4 @@ interface. So even if certain idioms appear in the Java library sources, that’
 the right way to do it. When you look at library code, you cannot assume that it’s an example
 that you should follow in your own code.
 
-library中的代码不一定是最正确的做法. 还是要多问为什么哈?
+library中的代码不一定是最正确的做法. 还是要多问为什么哈!
