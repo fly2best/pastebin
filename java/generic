@@ -1,0 +1,11 @@
+
+thinking in java的15.8节的末尾提到:
+
+In his weblog, 3 Neal Gafter (one of the lead developers for Java SE5) points out that he was
+lazy when rewriting the Java libraries, and that we should not do what he did. Neal also
+points out that he could not fix some of the Java library code without breaking the existing
+interface. So even if certain idioms appear in the Java library sources, that’s not necessarily
+the right way to do it. When you look at library code, you cannot assume that it’s an example
+that you should follow in your own code.
+
+library中的代码不一定是最正确的做法. 还是要多问为什么哈?
