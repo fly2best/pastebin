@@ -1,0 +1,18 @@
+
+public class MutableInteger {
+    private int value;
+
+    public int get() {
+        return value;
+    }
+
+    public void set(int value) {
+        this.value = value;
+    }
+}
+
+这个类不是线程安全的, 因为get和set都是再没有同步的情况下访问value的。
+与其他问题相比, 失效值更容易出现:
+如果某个线程调用了set, 那么另一个正在调用get的线程可能看到更新后的值, 也可能看不到.
+
+//解决方法: 同步对value的访问.

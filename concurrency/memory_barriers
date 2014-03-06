@@ -1,0 +1,21 @@
+
+Many CPU architectures therefore provide weaker memory-barrier instructions
+that do only one or the other of these two.
+Roughly speaking, a “read memory barrier” marks only the invalidate queue 
+and a “write memory barrier” marks only the store buffer,
+while a full-fledged memory barrier does both.
+
+
+The effect of this is that a read memory barrier
+orders only loads on the CPU that executes it, so
+that all loads preceding the read memory barrier will
+appear to have completed before any load following
+the read memory barrier. Similarly, a write memory
+barrier orders only stores, again on the CPU that
+executes it, and again so that all stores preceding
+the write memory barrier will appear to have com-
+pleted before any store following the write memory
+barrier. A full-fledged memory barrier orders both
+loads and stores, but again only on the CPU execut-
+ing the memory barrier.
+
