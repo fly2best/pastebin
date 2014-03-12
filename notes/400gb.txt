@@ -1,0 +1,30 @@
+http://60.171.206.198/down/2dfbe0af025f1347da0a54b483c0729c-737546622/%E7%BA%B8%E7%89%8C%E5%B1%8B.House.Of.Cards.2013.S02E11.%E4%B8%AD%E8%8B%B1%E5%AD%97%E5%B9%95.WEBrip.1024X512.mkv?cts=oth111A175A187A1634657978&ctp=111A175A187A163&ctt=1393131876&limit=3&spd=0&ctk=dd804ffca5d9768cdb429a3764e61758&chk=2dfbe0af025f1347da0a54b483c0729c-737546622&mtd=1
+
+http://60.171.206.195/down/9ebc565bc2239ba56396334fb9fc8a7c-648764799/%E7%BA%B8%E7%89%8C%E5%B1%8B.House.Of.Cards.2013.S02E12.%E4%B8%AD%E8%8B%B1%E5%AD%97%E5%B9%95.WEBrip.1024X512.mkv?cts=oth111A175A187A964657978&ctp=111A175A187A96&ctt=1393131923&limit=3&spd=0&ctk=44fbe83186df423e5c0d6706087e552b&chk=9ebc565bc2239ba56396334fb9fc8a7c-648764799&mtd=1
+
+http://60.171.206.195/down/6b1b0ac4b560a9f1d4051116c72be12a-818173880/%E7%BA%B8%E7%89%8C%E5%B1%8B.House.Of.Cards.2013.S02E13.%E4%B8%AD%E8%8B%B1%E5%AD%97%E5%B9%95.WEBrip.1024X512.mkv?cts=oth111A175A187A966468198&ctp=111A175A187A96&ctt=1393132050&limit=3&spd=0&ctk=2f39af580dd21834a44970daaa641865&chk=6b1b0ac4b560a9f1d4051116c72be12a-818173880&mtd=1
+
+
+tcp        0      0 202.114.1.58:46942      60.171.206.195:80       ESTABLISHED 5605/firefox    
+tcp        0      0 202.114.1.58:46940      60.171.206.195:80       ESTABLISHED 5605/firefox    
+tcp        0      0 202.114.1.58:46772      60.171.206.195:80       ESTABLISHED 5605/firefox    
+tcp        0      0 202.114.1.58:60172      60.171.206.198:80       ESTABLISHED 5605/firefox    
+tcp        0      0 202.114.1.58:46773      60.171.206.195:80       ESTABLISHED 5605/firefox    
+tcp        0      0 202.114.1.58:46941      60.171.206.195:80       ESTABLISHED 5605/firefox    
+tcp        0      0 202.114.1.58:60167      60.171.206.198:80       ESTABLISHED 5605/firefox    
+tcp        0      0 202.114.1.58:60171      60.171.206.198:80       ESTABLISHED 5605/firefox  
+
+
+结论:
+下载速度, 受ip地址限制; 限制同时只能下载一个文件是用cookie实现的,
+
+判断理由:
+
+1.  我同时下载了3个文件.
+    前两个文件, 直接就可以下载, 被分配到了不同的地址上, 应该是服务器端没有做cokkie同步, 所以可以同时下载.
+    第三个文件被分配到了和第二文件所在的服务器, 清楚cookie后可以下载.
+
+    虽然可以同时下载多个文件, 但是总的下载速度和下载一个文件的速度类似.
+2.  我在虚拟机里下载另外的文件, 虚拟机通过nat地址转换上网, 外界看到的是同一个地址，即202.114.1.58.
+    可以看到很明显的宿主机下载速度和虚拟机里的下载速度此消彼张.
+
