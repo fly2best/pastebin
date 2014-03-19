@@ -1,0 +1,13 @@
+
+hadoop 实现join的思路
+1. reduce端连接
+    给数据打标签, 记下不同的来源, 然后按key partition到reduce端连接.
+2. 基于DistributeCache的复制连接(map端)
+    把数量较小的数据复制到所有map端,直接连接
+3. 半连接: map侧过滤后在reduce连接(bloomfilter)
+    数量较小的数据也放不到内存, 可以对数据量较小的数据key建立hashset, 对数据量量较大的端进行过滤.
+    hashset比较占内存, 可以考虑bloom过滤器.
+4.  基于CompositeInputFormat的map端连接
+    这种方式对输入数据的格式有严格要求。每个输入数据集都必须被划分成相同的分片, 并且都是按照key排序的. 相同的key的须在相同的片内, 相同的key在不同数据集中的片号应该相同. 不要求数据总体有序.
+
+参考资料: <<hadoop in action>>, <<hadoop: the definitive guide>>
