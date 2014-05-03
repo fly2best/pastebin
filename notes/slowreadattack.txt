@@ -1,0 +1,24 @@
+
+慢连接攻击最早是在http://hellojava.info/?p=296这篇文章中看到的，说tomcat这类应用服务器在实现的时候对于诸如慢连接等的防攻击能力很弱, 所以一般在其前面加一层nginx代理.
+
+1. 慢连接攻击是什么?
+
+Slow Read attack
+http://en.wikipedia.org/wiki/Denial-of-service_attack#Slow_Read_attack
+
+Slow Read attack sends legitimate application layer requests but reads responses very slowly, thus trying to exhaust the server's connection pool. Slow reading is achieved by advertising very small number for the TCP Receive Window size and at the same time by emptying clients' TCP receive buffer slowly. That naturally ensures a very low data flow rate.
+
+2. tomcat为什么处理不了?
+
+按上面慢连接攻击的定义, 消耗了连接池,按我的理解, 这个连接池就是线程池, 采用的是每一连接一个线程的网络IO模型.
+以前java没有nio时, 这是唯一的网络连接处理方式, 现在tomcat应该不这么玩了.
+所以这个tomcat处理不了慢连接攻击, 应该是个过去式了.
+
+3. nginx是怎么做的?
+
+对于后端是动态服务来说，比如Java和PHP。这类服务器（如JBoss和PHP-FPM）的IO处理能力往往不高。Nginx有个好处是它会把Request在读取完整之前buffer住，这样交给后端的就是一个完整的HTTP请求，从而提高后端的效率，而不是断断续续的传递（互联网上连接速度一般比较慢）。同样，Nginx也可以把response给buffer住，同样也是减轻后端的压力。
+http://www.zhihu.com/question/19761434
+
+nginx采用的是非阻塞IO, 可以用一两个线程hold注很多连接, 慢连接是想占用线程池, 但这个地方压根没有线程池哈..
+
+如果是慢连接攻击, tomcat可以把response信息直接返回给nginx, 不会占用过多线程池, 如此,慢连接攻击对tomcat来说是透明的.
