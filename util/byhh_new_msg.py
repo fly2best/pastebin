@@ -5,13 +5,10 @@ import re
 
 http = httplib2.Http()
 loginUrl = 'http://bbs.whnet.edu.cn/cgi-bin/bbslogin'
-body = {'id': 'username', 'pw': 'pwd'}
+body = {'id': '', 'pw': ''}
 headers = {'Content-type': 'application/x-www-form-urlencoded'}
 response, content = http.request(loginUrl, 'POST', headers=headers, body=urllib.urlencode(body))
 lines = content.split('\n')
-
-p = re.compile(".*cookie='(.*)'.*")
-
 cookie = {}
 for cookieStr in re.findall(".*cookie='(.*)'.*", content):
     key = cookieStr.split('=')[0]
