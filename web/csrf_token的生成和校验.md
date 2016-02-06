@@ -10,9 +10,9 @@ google一下能搜到几个CSRFToken的Util
 
 a.  [OWASP CSRF Token Util][2]
 
-    上述代码给出了一个简单的实现，每个session共用一个CSRF Token，生成这个token后放在httpSession中，校验的时候把request的中的token和session中的token比较即可。
-    
-    如果requst中的cookie为空或者和session中的token不一致校验则不通过，代码如下：
+上述代码给出了一个简单的实现，每个session共用一个CSRF Token，生成这个token后放在httpSession中，校验的时候把request的中的token和session中的token比较即可。
+
+如果requst中的cookie为空或者和session中的token不一致校验则不通过，代码如下：
         
         public static boolean isValid (HttpServletRequest request) 
          throws ServletException, NoSuchAlgorithmException {
@@ -24,17 +24,17 @@ a.  [OWASP CSRF Token Util][2]
                                 request.getParameter(SESSION_ATTR_KEY));
          }
 
-	简单粗暴，但是有效唉。妈妈再也不用担心我被csrf了。。。
+简单粗暴，但是有效唉。妈妈再也不用担心我被csrf了。。。
 
 b. webx中的实现
     
-    webx是啥我就不啰嗦了，我们只看看他的csrf的实现。webx的实现稍显复杂，[CSRF Token的生成类][3], [CSRF Token的校验类][4].  
-    webx中给出了两种实现，一种是基于session的长存活token，一是只使用一次的短存活时间token。
+webx是啥我就不啰嗦了，我们只看看他的csrf的实现。webx的实现稍显复杂，[CSRF Token的生成类][3], [CSRF Token的校验类][4].  
+webx中给出了两种实现，一种是基于session的长存活token，一是只使用一次的短存活时间token。
     
-    除了存活时间长短以外没有本质区别，没有别的区别。不过这个uniqueToken的生成和移除应该不是线程安全的，不知道在实际用的时候有没有问题。在我们的web工程中使用的是loneLive的Token生成和校验方法。
+除了存活时间长短以外没有本质区别，没有别的区别。不过这个uniqueToken的生成和移除应该不是线程安全的，不知道在实际用的时候有没有问题。在我们的web工程中使用的是loneLive的Token生成和校验方法。
     
-    不过web想中校验有坑啊, 如果从requst中拿不到token就不校验了，这个如果攻击者把token给去掉不就可以攻击了吗？
-    我们在使用的时候还要自己看看这个token有没有传进来才行。
+不过web想中校验有坑啊, 如果从requst中拿不到token就不校验了，这个如果攻击者把token给去掉不就可以攻击了吗？
+我们在使用的时候还要自己看看这个token有没有传进来才行。
     
         if (tokenFromRequest != null) {
             HttpSession session = rundata.getRequest().getSession();
@@ -59,7 +59,7 @@ b. webx中的实现
 
 新年快乐~
 
-[1]: http://www.cnblogs.com/hyddd/archive/2009/04/09/1432744.html “浅谈CSRF攻击方式”
+[1]: http://www.cnblogs.com/hyddd/archive/2009/04/09/1432744.html
 [2]: https://code.google.com/p/owasp-esapi-java/issues/attachmentText?id=162&aid=3277549059686427905&name=CSRFTokenUtil.java&token=5d2dc0548ec58bbf6c1cf93e640c94c8
 [3]: https://github.com/webx/citrus/blob/master/webx/turbine/src/main/java/com/alibaba/citrus/turbine/util/CsrfToken.java
 [4]: https://github.com/webx/citrus/blob/master/webx/turbine/src/main/java/com/alibaba/citrus/turbine/pipeline/valve/CheckCsrfTokenValve.java
